@@ -7,7 +7,7 @@ export {}
 
 declare module 'vue' {
   export interface GlobalComponents {
-    ElPagination: typeof import('element-plus/es')['ElPagination']
-    SvgIcon: typeof import('./src/components/SvgIcon/index.vue')['default']
+    ElPagination: (typeof import('element-plus/es'))['ElPagination']
+    SvgIcon: (typeof import('./src/components/SvgIcon/index.vue'))['default']
   }
 }
