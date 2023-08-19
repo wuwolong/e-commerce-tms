@@ -1,4 +1,4 @@
-import SvgIcon from '@/components/SvgIcon/index.vue'
+import SvgIcon from '@/components/SvgIcon'
 const globalCpnsObj: { [props: string]: unknown } = { SvgIcon }
 const globalCpnsObjKeys: string[] = Object.keys(globalCpnsObj)
 export default {

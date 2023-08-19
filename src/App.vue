@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ElConfigProvider } from 'element-plus'
-import zhCn from 'element-plus/es/locale/lang/zh-cn'
+// import zhCn from 'element-plus/es/locale/lang/zh-cn'
 import SvgIcon from '@/components/SvgIcon/index.vue'
-// import zhCn from 'element-plus/dist/locale/zh-cn.mjs'
+import zhCn from 'element-plus/dist/locale/zh-cn.mjs'
 const str = '我爱你'
 console.log(str)
 </script>
@@ -24,6 +24,6 @@ console.log(str)
 .demo {
   width: 200px;
   height: 200px;
-  border: 1px solid red;
+  border: 1px solid $color;
 }
 </style>
