@@ -1,29 +1,35 @@
-import axios, { AxiosInstance, AxiosRequestConfig } from 'axios'
-import RequestConfigInterface, { InterceptorInterface } from './types.ts'
-import { ElLoading } from 'element-plus'
-export default class Request {
+import axios from 'axios'
+import type { AxiosInstance } from 'axios'
+import { WLRequestInterceptors, WLAxiosRequestConfig } from './type'
+// import { ElLoading } from 'element-plus'
+// import { ILoadingInstance } from 'element-plus/lib/el-loading/src/loading.type'
+
+class WLRequest {
   instance: AxiosInstance
-  interceptors?: InterceptorInterface
-  loading?: any
-  constructor(config: RequestConfigInterface) {
+  interceptors?: WLRequestInterceptors
+  loading: any
+  constructor(config: WLAxiosRequestConfig) {
     this.instance = axios.create(config)
-    this.interceptors = config?.interceptors
-    this.loading = config?.loading
+    this.interceptors = config.interceptors
+
+    // 使用拦截器
+    // 1.从config中取出的拦截器是对应的实例的拦截器
     this.instance.interceptors.request.use(
-      this.interceptors?.ReqInterceptor,
-      this.interceptors?.ReqErrorCatchInterceptor,
+      this.interceptors?.requestInterceptor,
+      this.interceptors?.requestInterceptorCatch,
     )
     this.instance.interceptors.response.use(
-      this.interceptors?.ResInterceptor,
-      this.interceptors?.ResErrorCatchInterceptor,
+      this.interceptors?.responseInterceptor,
+      this.interceptors?.responseInterceptorCatch,
     )
+    //2.所有实例都有的拦截器，也就是类的拦截器
     this.instance.interceptors.request.use(
-      (config: any) => {
-        this.loading = ElLoading.service({
-          lock: true,
-          text: 'Loading',
-          background: 'rgba(0, 0, 0, 0.7)',
-        })
+      (config) => {
+        // this.loading = ElLoading.service({
+        //   lock: true,
+        //   text: 'Loading',
+        //   background: 'rgba(0, 0, 0, 0.7)'
+        // })
         return config
       },
       (err) => {
@@ -42,20 +48,38 @@ export default class Request {
       },
     )
   }
-
-  request(config: AxiosRequestConfig) {
-    return this.instance.request(config)
+  request<T>(config: WLAxiosRequestConfig<T>): Promise<T> {
+    return new Promise((resolve, rejcet) => {
+      //对单个请求拦截器的处理
+      if (config.interceptors?.requestInterceptor) {
+        config = config.interceptors?.requestInterceptor(config)
+        // console.log(config)
+      }
+      this.instance
+        .request<any, T, any>(config)
+        .then((res) => {
+          if (config.interceptors?.responseInterceptor) {
+            res = config.interceptors?.responseInterceptor(res)
+          }
+          resolve(res)
+        })
+        .catch((err) => {
+          rejcet(err)
+        })
+    })
   }
-  get(config: AxiosRequestConfig) {
-    return this.instance.get(config as string)
+  get<T = any>(config: WLAxiosRequestConfig<T>): Promise<T> {
+    return this.request<T>({ ...config, method: 'GET' })
   }
-  post(config: AxiosRequestConfig) {
-    return this.instance.post(config as string)
+  post<T = any>(config: WLAxiosRequestConfig<T>): Promise<T> {
+    return this.request<T>({ ...config, method: 'POST' })
   }
-  delete(config: AxiosRequestConfig) {
-    return this.instance.delete(config as string)
+  delete<T = any>(config: WLAxiosRequestConfig<T>): Promise<T> {
+    return this.request<T>({ ...config, method: 'DELETE' })
   }
-  patch(config: AxiosRequestConfig) {
-    return this.instance.patch(config as string)
+  patch<T = any>(config: WLAxiosRequestConfig<T>): Promise<T> {
+    return this.request<T>({ ...config, method: 'PATCH' })
   }
 }
+
+export default WLRequest

@@ -1,33 +1,27 @@
-/**
- * 需求请求拦截相应拦截 请求拦截有token验证 有loading
- * 实现一次封装多次使用
- * 重写get request post delete等方法
- * 架构 两层封装
- */
-import { InternalAxiosRequestConfig, AxiosResponse } from 'axios'
-import { ElLoading } from 'element-plus'
-import Request from './request'
-const request = new Request({
-  baseURL: import.meta.env.VITE_APP_BASE_API,
-  timeout: 5000,
+import WLRequest from './request'
+import { BASE_URL, TIME_OUT } from './request/config'
+import localCache from '@/utils/cache'
+// console.log(BASE_URL)
+export default new WLRequest({
+  baseURL: BASE_URL,
+  timeout: TIME_OUT,
   interceptors: {
-    ReqInterceptor: (config: InternalAxiosRequestConfig) => {
-      const loading = ElLoading.service({
-        lock: true,
-        text: 'Loading',
-        background: 'rgba(0, 0, 0, 0.7)',
-      })
-      setTimeout(() => {
-        loading.close()
-      }, 2000)
-      config.headers.Authorization = 'Bearer '
+    //请求拦截器  获取token并配置在请求头上让以后每一次请求都携带token
+    requestInterceptor(config) {
+      const token = localCache.getCache('token')
+      if (token) {
+        config.headers!.Authorization = `Bearer ${token}`
+      }
       return config
     },
-    ReqErrorCatchInterceptor: (err: any) => Promise.reject(err),
-    ResInterceptor: (res: AxiosResponse) => {
+    requestInterceptorCatch(err) {
+      return Promise.reject(err)
+    },
+    responseInterceptor(res) {
       return res
     },
-    ResErrorCatchInterceptor: (err: any) => Promise.reject(err),
+    responseInterceptorCatch(err) {
+      return Promise.reject(err)
+    },
   },
 })
-export default request
