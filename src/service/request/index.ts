@@ -1,7 +1,7 @@
 import axios from 'axios'
 import type { AxiosInstance } from 'axios'
 import { WLRequestInterceptors, WLAxiosRequestConfig } from './type'
-// import { ElLoading } from 'element-plus'
+import { ElLoading } from 'element-plus'
 // import { ILoadingInstance } from 'element-plus/lib/el-loading/src/loading.type'
 
 class WLRequest {
@@ -15,7 +15,7 @@ class WLRequest {
     // 使用拦截器
     // 1.从config中取出的拦截器是对应的实例的拦截器
     this.instance.interceptors.request.use(
-      this.interceptors?.requestInterceptor,
+      this.interceptors?.requestInterceptor as any,
       this.interceptors?.requestInterceptorCatch,
     )
     this.instance.interceptors.response.use(
@@ -25,11 +25,11 @@ class WLRequest {
     //2.所有实例都有的拦截器，也就是类的拦截器
     this.instance.interceptors.request.use(
       (config) => {
-        // this.loading = ElLoading.service({
-        //   lock: true,
-        //   text: 'Loading',
-        //   background: 'rgba(0, 0, 0, 0.7)'
-        // })
+        this.loading = ElLoading.service({
+          lock: true,
+          text: 'Loading',
+          background: 'rgba(0, 0, 0, 0.7)',
+        })
         return config
       },
       (err) => {
@@ -53,7 +53,6 @@ class WLRequest {
       //对单个请求拦截器的处理
       if (config.interceptors?.requestInterceptor) {
         config = config.interceptors?.requestInterceptor(config)
-        // console.log(config)
       }
       this.instance
         .request<any, T, any>(config)
