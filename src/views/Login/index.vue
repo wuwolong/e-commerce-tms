@@ -1,9 +1,8 @@
 <script setup lang="ts">
 import { User, Lock } from '@element-plus/icons-vue'
 import type { FormRules, FormInstance } from 'element-plus'
-import { reqLogin } from '@/service/user'
-import router from '@/router'
-import { localCache, getTime, validatePassword } from '@/utils'
+import { useUserStore } from '@/store/modules/user'
+import { validatePassword } from '@/utils'
 interface RuleForm {
   username: string
   password: string
@@ -21,27 +20,14 @@ const rules = reactive<FormRules<RuleForm>>({
   password: [{ validator: validatePassword, trigger: 'blur' }],
 })
 const ruleFormRef = ref<FormInstance>()
+const userStore = useUserStore()
 const login = async (formEl: FormInstance | undefined) => {
   //验证账号密码是否正确
   if (!formEl) return
   await formEl.validate(async (valid, fields) => {
     if (valid) {
       const { username, password } = accountInfo
-      const { code, data } = await reqLogin({ username, password })
-      if (code === 200) {
-        localCache.setCache('token', data.token)
-        ElNotification({
-          title: 'login successfully',
-          message: getTime(),
-          type: 'success',
-        })
-        router.push('/')
-      } else {
-        ElMessage({
-          message: 'The account or password is incorrect',
-          type: 'error',
-        })
-      }
+      userStore.login({ username, password })
     } else {
       ElMessage({
         message: `error submit!,${fields}`,
