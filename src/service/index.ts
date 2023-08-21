@@ -1,8 +1,7 @@
-import WLRequest from './request'
+import Request from './request'
 import { BASE_URL, TIME_OUT } from './request/config'
 import localCache from '@/utils/cache'
-// console.log(BASE_URL)
-export default new WLRequest({
+const request = new Request({
   baseURL: BASE_URL,
   timeout: TIME_OUT,
   interceptors: {
@@ -25,3 +24,4 @@ export default new WLRequest({
     },
   },
 })
+export default request

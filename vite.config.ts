@@ -13,6 +13,13 @@ export default ({ command }: ConfigEnv): UserConfigExport => ({
     vue(),
     AutoImport({
       resolvers: [ElementPlusResolver()],
+      imports: ['vue', 'vue-router'],
+      dts: 'auto-imports.d.ts',
+      eslintrc: {
+        enabled: true, // Default `false`
+        filepath: './.eslintrc-auto-import.json', // Default `./.eslintrc-auto-import.json`
+        globalsPropValue: true, // Default `true`, (true | false | 'readonly' | 'readable' | 'writable' | 'writeable')
+      },
     }),
     Components({
       resolvers: [ElementPlusResolver()],

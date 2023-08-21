@@ -19,12 +19,14 @@ module.exports = {
       jsx: true,
     },
   },
+  dts: './auto-imports.d.ts',
   /* 继承已有的规则 */
   extends: [
     'eslint:recommended',
     'plugin:vue/vue3-essential',
     'plugin:@typescript-eslint/recommended',
     'plugin:prettier/recommended',
+    './.eslintrc-auto-import.json',
   ],
   plugins: ['vue', '@typescript-eslint'],
   /*

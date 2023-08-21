@@ -4,7 +4,7 @@ import { WLRequestInterceptors, WLAxiosRequestConfig } from './type'
 import { ElLoading } from 'element-plus'
 // import { ILoadingInstance } from 'element-plus/lib/el-loading/src/loading.type'
 
-class WLRequest {
+class Request {
   instance: AxiosInstance
   interceptors?: WLRequestInterceptors
   loading: any
@@ -81,4 +81,4 @@ class WLRequest {
   }
 }
 
-export default WLRequest
+export default Request

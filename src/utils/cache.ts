@@ -13,5 +13,5 @@ class LocalCache {
     window.localStorage.clear()
   }
 }
-
-export default new LocalCache()
+export const localCache = new LocalCache()
+export default localCache
